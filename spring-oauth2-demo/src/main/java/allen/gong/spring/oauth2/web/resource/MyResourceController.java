@@ -1,7 +1,6 @@
 package allen.gong.spring.oauth2.web.resource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/myrs")
 public class MyResourceController {
 	
+	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping(value = "/authorize", method = RequestMethod.GET)
 	public HttpEntity<String> authorize(HttpServletRequest request, HttpServletResponse response){

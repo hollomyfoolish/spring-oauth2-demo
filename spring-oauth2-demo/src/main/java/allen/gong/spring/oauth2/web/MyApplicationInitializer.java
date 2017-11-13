@@ -20,6 +20,9 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import allen.gong.spring.oauth2.web.cfg.Oauth2AuthorizationServerConfig;
+import allen.gong.spring.oauth2.web.cfg.SecurityConfiguration;
+import allen.gong.spring.oauth2.web.filter.FakeLoginFilter;
 import allen.gong.spring.oauth2.web.listener.SessionListener;
 
 public class MyApplicationInitializer implements WebApplicationInitializer {
@@ -39,11 +42,23 @@ public class MyApplicationInitializer implements WebApplicationInitializer {
 	}
 
 	private void addServiceFilter(final ServletContext servletContext) {
-		addSpringSessionRepositoryFilter (servletContext);
-//		DelegatingFilterProxy filter = new DelegatingFilterProxy("springSecurityFilterChain");
-//		filter.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
-//		servletContext.addFilter("springSecurityFilterChain", filter).addMappingForUrlPatterns(null, false, "/*");
+		addSpringSessionRepositoryFilter(servletContext);
+		addFakeLoginFilter(servletContext);
+		addSpringSecurityFilter(servletContext);
 		addCharacterEncodingFilter(servletContext);
+	}
+
+	private void addFakeLoginFilter(ServletContext servletContext) {
+		javax.servlet.FilterRegistration.Dynamic filter = servletContext.addFilter("FakeLoginFilter", new FakeLoginFilter());
+        if (filter != null) {
+            filter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD), false, "/*");
+        }
+	}
+
+	public void addSpringSecurityFilter(final ServletContext servletContext) {
+		DelegatingFilterProxy filter = new DelegatingFilterProxy("springSecurityFilterChain");
+//		filter.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
+		servletContext.addFilter("springSecurityFilterChain", filter).addMappingForUrlPatterns(null, false, "/*");
 	}
 
     private void addSpringSessionRepositoryFilter(ServletContext servletContext) {
@@ -73,6 +88,8 @@ public class MyApplicationInitializer implements WebApplicationInitializer {
     protected void configAppContext(AnnotationConfigWebApplicationContext appContext) {
     	appContext.setDisplayName("nlpauth");
     	appContext.register(GlobalAppContextConfig.class);
+    	appContext.register(SecurityConfiguration.class);
+    	appContext.register(Oauth2AuthorizationServerConfig.class);
     }
 
     protected void configServletContext(ServletContext servletContext) {

@@ -15,8 +15,8 @@ public class MySpringWebContext<C extends ConfigurableApplicationContext> implem
 		if(applicationContext instanceof AnnotationConfigWebApplicationContext){
 			AnnotationConfigWebApplicationContext ac = (AnnotationConfigWebApplicationContext)applicationContext;
 			ac.register(WebMvcConfig.class);
-			ac.register(SecurityConfiguration.class);
-			ac.register(Oauth2AuthorizationServerConfig.class);
+//			ac.register(SecurityConfiguration.class);
+//			ac.register(Oauth2AuthorizationServerConfig.class);
 		}
 	}
 	

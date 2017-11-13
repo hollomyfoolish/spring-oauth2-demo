@@ -6,9 +6,9 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>C:/Users/i311688/Desktop/MyTemp/nlpcloud/logs/nlp-authenticator.log</file>
+        <file>C:/github-repo/spring-oauth2-demo/spring-oauth2-demo/spring.securiry.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>C:/Users/i311688/Desktop/MyTemp/nlpcloud/logs/nlp-authenticator.log.gz</fileNamePattern>
+            <fileNamePattern>/opt/sap/log/nlp-authenticator.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>90</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -17,6 +17,6 @@
     </appender>
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />  
+        <appender-ref ref="FILE" />
     </root>
 </configuration>

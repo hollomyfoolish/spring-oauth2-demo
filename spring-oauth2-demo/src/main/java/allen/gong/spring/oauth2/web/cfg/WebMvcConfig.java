@@ -5,18 +5,15 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import allen.gong.spring.oauth2.web.resource.AdminController;
 import allen.gong.spring.oauth2.web.resource.MyResourceController;
+import allen.gong.spring.oauth2.web.resource.PublicResourceController;
 
 @Configurable
 @EnableWebMvc
@@ -53,16 +50,19 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Initializin
 	public MyResourceController myResourceController() {
 		return new MyResourceController();
 	}
-
+	
 	// N.B. the @Qualifier here should not be necessary (gh-298) but lots of users report needing it.
-//	@Bean
-	public AdminController adminController(TokenStore tokenStore, @Qualifier("consumerTokenServices") ConsumerTokenServices tokenServices) {
+	@Bean
+	public AdminController adminController() {
 		AdminController adminController = new AdminController();
-		adminController.setTokenStore(tokenStore);
-		adminController.setTokenServices(tokenServices);
 		return adminController;
 	}
 
+	@Bean
+	public PublicResourceController publicResourceController(){
+		return new PublicResourceController();
+	}
+	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
