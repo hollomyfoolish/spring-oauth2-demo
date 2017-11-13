@@ -1,0 +1,75 @@
+package allen.gong.spring.oauth2.web.cfg;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import allen.gong.spring.oauth2.web.resource.AdminController;
+import allen.gong.spring.oauth2.web.resource.MyResourceController;
+
+@Configurable
+@EnableWebMvc
+public class WebMvcConfig extends WebMvcConfigurerAdapter implements InitializingBean{
+
+	@Autowired
+	private DataSource dataSource;
+	
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+	
+//	@Bean
+//	public ContentNegotiatingViewResolver contentViewResolver() throws Exception {
+//		ContentNegotiationManagerFactoryBean contentNegotiationManager = new ContentNegotiationManagerFactoryBean();
+//		contentNegotiationManager.addMediaType("json", MediaType.APPLICATION_JSON);
+//
+//		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+//		viewResolver.setPrefix("/WEB-INF/jsp/");
+//		viewResolver.setSuffix(".jsp");
+//
+//		MappingJackson2JsonView defaultView = new MappingJackson2JsonView();
+//		defaultView.setExtractValueFromSingleKeyModel(true);
+//
+//		ContentNegotiatingViewResolver contentViewResolver = new ContentNegotiatingViewResolver();
+//		contentViewResolver.setContentNegotiationManager(contentNegotiationManager.getObject());
+//		contentViewResolver.setViewResolvers(Arrays.<ViewResolver> asList(viewResolver));
+//		contentViewResolver.setDefaultViews(Arrays.<View> asList(defaultView));
+//		return contentViewResolver;
+//	}
+
+	@Bean
+	public MyResourceController myResourceController() {
+		return new MyResourceController();
+	}
+
+	// N.B. the @Qualifier here should not be necessary (gh-298) but lots of users report needing it.
+//	@Bean
+	public AdminController adminController(TokenStore tokenStore, @Qualifier("consumerTokenServices") ConsumerTokenServices tokenServices) {
+		AdminController adminController = new AdminController();
+		adminController.setTokenStore(tokenStore);
+		adminController.setTokenServices(tokenServices);
+		return adminController;
+	}
+
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println(this.dataSource);
+	}
+}
