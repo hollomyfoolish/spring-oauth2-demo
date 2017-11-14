@@ -4,13 +4,20 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.OAuth2RequestValidator;
+import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
@@ -27,6 +34,10 @@ public class Oauth2AuthorizationServerConfig extends AuthorizationServerConfigur
 	@Autowired
 	private DataSource dataSource;
 	
+	@Autowired
+	@Qualifier("authenticationManagerBean")
+	private AuthenticationManager authenticationManager;
+	
 	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
 	@Bean
@@ -36,7 +47,8 @@ public class Oauth2AuthorizationServerConfig extends AuthorizationServerConfigur
 	
 	@Bean
 	protected AuthorizationCodeServices authorizationCodeServices() {
-		return new JdbcAuthorizationCodeServices(dataSource);
+		JdbcAuthorizationCodeServices codeService = new JdbcAuthorizationCodeServices(dataSource);
+		return codeService;
 	}
 	
 	@Override
@@ -56,13 +68,20 @@ public class Oauth2AuthorizationServerConfig extends AuthorizationServerConfigur
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		ApprovalStoreUserApprovalHandler userApprovalHandler = new ApprovalStoreUserApprovalHandler();
-		OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager();
+//		OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager();
 		endpoints.authorizationCodeServices(authorizationCodeServices())
-//			.authenticationManager(auth)
-//			.userApprovalHandler(userApprovalHandler)
 			.authenticationManager(authenticationManager)
+//			.userApprovalHandler(userApprovalHandler)
 			.tokenStore(tokenStore())
-			.approvalStoreDisabled();
+			.approvalStoreDisabled()
+			.requestValidator(new OAuth2RequestValidator(){
+				@Override
+				public void validateScope(AuthorizationRequest authorizationRequest, ClientDetails client) throws InvalidScopeException {
+				}
+
+				@Override
+				public void validateScope(TokenRequest tokenRequest, ClientDetails client) throws InvalidScopeException {
+				}});
 	}
 	
 }

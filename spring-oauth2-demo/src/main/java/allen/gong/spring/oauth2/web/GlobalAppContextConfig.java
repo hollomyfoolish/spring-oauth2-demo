@@ -1,5 +1,8 @@
 package allen.gong.spring.oauth2.web;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -8,6 +11,8 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
+import com.sap.db.jdbc.Driver;
 
 @Configuration
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 60)
@@ -29,6 +34,11 @@ public class GlobalAppContextConfig {
 	
 	@Bean
 	public DataSource dataSource() {
+		try {
+			DriverManager.registerDriver(new Driver());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return new DriverManagerDataSource("jdbc:sap://10.58.5.74:30015?currentschema=NLP_CLOUD_AUTH", "SYSTEM", "manager");
 	}
 	
