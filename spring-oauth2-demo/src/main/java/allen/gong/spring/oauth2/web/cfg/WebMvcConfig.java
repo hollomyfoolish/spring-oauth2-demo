@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import allen.gong.spring.oauth2.web.resource.AdminController;
 import allen.gong.spring.oauth2.web.resource.MyResourceController;
 import allen.gong.spring.oauth2.web.resource.PublicResourceController;
+import allen.gong.spring.oauth2.web.resource.UserController;
 
 @Configurable
 @EnableWebMvc
@@ -61,6 +62,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements Initializin
 	@Bean
 	public PublicResourceController publicResourceController(){
 		return new PublicResourceController();
+	}
+	
+	@Bean
+	public UserController userController(){
+		return new UserController();
 	}
 	
 	@Override

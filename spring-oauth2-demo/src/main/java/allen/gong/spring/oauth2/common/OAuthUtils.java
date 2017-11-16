@@ -6,4 +6,8 @@ public interface OAuthUtils {
 	String B1_OAUTH_ROLE = "B1_CLIENT";
 	String B1_CLIENT_SECRET = "__secrete__";
 	String OAUTH_GRANTYPE_CODE = "authorization_code";
+	
+	
+	String RESOURCE_ID = "nlp-gateway-api";
+	
 }

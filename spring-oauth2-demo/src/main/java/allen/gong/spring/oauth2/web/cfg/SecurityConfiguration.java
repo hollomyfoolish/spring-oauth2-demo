@@ -23,7 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().hasAnyRole("USER")
                 .and()
             .csrf().disable()
-            .httpBasic().disable()
+//            .httpBasic().disable()
             .logout().disable();
     }
 

@@ -21,6 +21,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import allen.gong.spring.oauth2.web.cfg.Oauth2AuthorizationServerConfig;
+import allen.gong.spring.oauth2.web.cfg.Oauth2ResourceServerConfig;
 import allen.gong.spring.oauth2.web.cfg.SecurityConfiguration;
 import allen.gong.spring.oauth2.web.filter.FakeLoginFilter;
 import allen.gong.spring.oauth2.web.listener.SessionListener;
@@ -90,6 +91,7 @@ public class MyApplicationInitializer implements WebApplicationInitializer {
     	appContext.register(GlobalAppContextConfig.class);
     	appContext.register(SecurityConfiguration.class);
     	appContext.register(Oauth2AuthorizationServerConfig.class);
+    	appContext.register(Oauth2ResourceServerConfig.class);
     }
 
     protected void configServletContext(ServletContext servletContext) {
